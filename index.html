@@ -1,76 +1,87 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
-        <title>Room Furnish</title>
+        <meta charset=UTF-8 />
         <style>
             html, body {
                 background-color: #000;
-                width: 100%;
-                height: 100%;
                 margin: 0;
                 padding: 0;
-                overflow: hidden;
+                height: 100%;
+                overflow: hidden !important;
             }
         </style>
+        <title>CS410 Intro</title>
     </head>
     <body>
-
-        <script src="three.js-master/build/three.js"></script>
-        <script src="three.js-master/examples/js/controls/TrackballControls.js"</script>
-        <script src="schteppe-cannon.js-569730f/build/cannon.js"></script>
-        <script src="schteppe-cannon.js-569730f/libs/Detector.js"></script>
-
+        <script src="three.min.js"></script>
+        <script src="three.js-master/examples/js/controls/TrackballControls.js"></script>
         <script>
 
-            var scene, camera, renderer, effect, controls;
-            var floor;
-            var ambientLight, directionalLight;
+        var scene, camera, renderer, rain, starGeometry;
+        var fov, ratio, zNear, zFar;
+        fov = 60;
+        ratio = window.innerWidth / window.innerHeight;
+        zNear = 1;
+        zFar = 1000;
 
-            window.onload = function() {
+        window.onload = function() {
 
-                scene = new THREE.Scene();
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(fov, ratio, zNear, zFar);
+            camera.position.set(200, 200, 1000);
 
-                var fov = 60;
-                var ratio = window.innerWidth / window.innerHeight;
-                var zNear = 1;
-                var zFar = 1000;
+            ambient = new THREE.AmbientLight(0x555555);
+            scene.add(ambient);
 
-                camera = new THREE.PerspectiveCamera(fov, ratio, zNear, zFar);
-                camera.position.set(0, 0, 500);
+            directionalLight = new THREE.DirectionalLight(0xffeedd);
+            directionalLight.position.set(0,0,1);
+            scene.add(directionalLight);
 
-                renderer = new THREE.WebGLRenderer({alpha: true});
-                renderer.setSize(window.innerWidth, window.innerHeight);
-                document.body.appendChild(renderer.domElement);
+            renderer = new THREE.WebGLRenderer();
+            scene.fog = new THREE.FogExp2(0x11111f, 0.002);
+            renderer.setClearColor(scene.fog.color);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
 
-                /* Lighting */
-                // Ambient
-                ambientLight = new THREE.AmbientLight();
-                ambientLight.position.set(0, 0, 800);
-                scene.add(ambientLight);
+            starGeometry = new THREE.Geometry();
+            for (var i = 0;i < 20000; i++) {
+                star = new THREE.Vector3(
+                Math.random() * 400 -200,
+                Math.random() * 500 - 250,
+                Math.random() * 400 - 200
+                );
+                star.velocity = {};
+                star.velocity = 0;
+                starGeometry.vertices.push(star);
+            }
 
-                // Directional
-                directionalLight = new THREE.DirectionalLight();
-                directionalLight.position.set(0, 0, 600);
-                scene.add(directionalLight);
+            starMaterial = new THREE.PointsMaterial({
+                color: 0xffffff,
+                size: 0.1,
+                transparent: true
+            });
 
-                var material = new THREE.MeshPhysicalMaterial({color: 0xff0000});
-                var geometry = new THREE.BoxBufferGeometry(20, 20, 20);
-                var cube = new THREE.Mesh(geometry, material);
+            stars = new THREE.Points(starGeometry, starMaterial);
 
-                scene.add(cube);
+            scene.add(stars);
 
-                /* Controls */
-                controls = new THREE.TrackballControls(camera, renderer.domElement);
+            controls = new THREE.TrackballControls(camera, renderer.domElement);
+            controls.maxDistance = 100;
+            controls.minDistance = 1;
+            controls.noPan = true;
 
-                animate();
-            };
 
-            function animate() {
-                requestAnimationFrame(animate);
-                controls.update();
-                renderer.render(scene, camera);
-            };
+            animate();
+        }
+
+        function animate() {
+            starGeometry.verticesNeedUpdate = true;
+            stars.rotation.y +=0.002;
+            controls.update();
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+            }
         </script>
     </body>
 </html>
