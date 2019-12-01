@@ -69,8 +69,11 @@
 
             scene.add(cube);
 
+            removeObject(stars);
+
             // Trackball controls and settings
             controls = new THREE.TrackballControls(camera, renderer.domElement);
+            /* Keep trackball within starGeometry box with these settings */
             controls.maxDistance = 100;
             controls.minDistance = 1;
             controls.noPan = true;
@@ -99,6 +102,14 @@
             stars = new THREE.Points(starGeometry, starMaterial);
 
             scene.add(stars);
+        }
+
+        // Remove an object from the scene
+        function removeObject(object) {
+            scene.remove(object);
+            object.geometry.dispose();
+            object.material.dispose();
+            object = undefined;
         }
 
         function animate() {
