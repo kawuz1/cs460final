@@ -26,7 +26,20 @@
         zNear = 1;
         zFar = 1000;
 
-        window.onload = function() {
+        clicked = false;
+        window.onclick = function() {
+            if (clicked) {
+                return;
+            }
+            clicked = true;
+            init();
+        }
+
+        function init() {
+            // Music
+            var music = document.getElementById('music');
+            music.autoplay = true;
+            music.load();
 
             // Scene and lighting
             scene = new THREE.Scene();
@@ -48,6 +61,13 @@
 
             // Create stars
             createStars(10000);
+
+            // Random shape
+            cubeGeo = new THREE.BoxGeometry(20, 20, 20);
+            cubeMat = new THREE.MeshStandardMaterial();
+            cube = new THREE.Mesh(cubeGeo, cubeMat);
+
+            scene.add(cube);
 
             // Trackball controls and settings
             controls = new THREE.TrackballControls(camera, renderer.domElement);
@@ -88,5 +108,9 @@
             requestAnimationFrame(animate);
             }
         </script>
+
+        <audio id = "music">
+            <source src="Cinematic.wav">
+        </audio>
     </body>
 </html>
