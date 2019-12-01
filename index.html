@@ -18,8 +18,9 @@
         <script src="three.js-master/examples/js/controls/TrackballControls.js"></script>
         <script>
 
-        var scene, camera, renderer, rain, starGeometry;
+        var scene, camera, renderer, rain, starGeometry, angle;
         var fov, ratio, zNear, zFar;
+        angle = 0;
         fov = 60;
         ratio = window.innerWidth / window.innerHeight;
         zNear = 1;
@@ -27,11 +28,12 @@
 
         window.onload = function() {
 
+            // Scene and lighting
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(fov, ratio, zNear, zFar);
             camera.position.set(200, 200, 1000);
 
-            ambient = new THREE.AmbientLight(0x555555);
+            ambient = new THREE.AmbientLight(0xffffff);
             scene.add(ambient);
 
             directionalLight = new THREE.DirectionalLight(0xffeedd);
@@ -44,15 +46,27 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.domElement);
 
+            // Create stars
+            createStars(10000);
+
+            // Trackball controls and settings
+            controls = new THREE.TrackballControls(camera, renderer.domElement);
+            controls.maxDistance = 100;
+            controls.minDistance = 1;
+            controls.noPan = true;
+
+            animate();
+        }
+
+        function createStars(starCount) {
             starGeometry = new THREE.Geometry();
-            for (var i = 0;i < 20000; i++) {
+
+            for (var i = 0;i < starCount; i++) {
                 star = new THREE.Vector3(
                 Math.random() * 400 -200,
                 Math.random() * 500 - 250,
                 Math.random() * 400 - 200
                 );
-                star.velocity = {};
-                star.velocity = 0;
                 starGeometry.vertices.push(star);
             }
 
@@ -65,18 +79,10 @@
             stars = new THREE.Points(starGeometry, starMaterial);
 
             scene.add(stars);
-
-            controls = new THREE.TrackballControls(camera, renderer.domElement);
-            controls.maxDistance = 100;
-            controls.minDistance = 1;
-            controls.noPan = true;
-
-
-            animate();
         }
 
         function animate() {
-            starGeometry.verticesNeedUpdate = true;
+            //starGeometry.verticesNeedUpdate = true;
             stars.rotation.y +=0.002;
             controls.update();
             renderer.render(scene, camera);
