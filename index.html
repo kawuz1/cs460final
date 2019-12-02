@@ -57,13 +57,6 @@
 
             createStars(35000);
 
-            // Random shape
-            cubeGeo = new THREE.BoxGeometry(20, 20, 20);
-            cubeMat = new THREE.MeshStandardMaterial();
-            cube = new THREE.Mesh(cubeGeo, cubeMat);
-
-            scene.add(cube);
-
             trackballSetup(1, 100);
 
             animate();
@@ -133,7 +126,10 @@
             controls.noPan = true;
         }
 
-        // Remove an object from the scene
+        /*
+            Info: Remove an object from the scene
+                  given an object name
+        */
         function removeObject(object) {
             scene.remove(object);
             object.geometry.dispose();
