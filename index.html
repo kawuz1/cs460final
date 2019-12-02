@@ -60,7 +60,7 @@
             document.body.appendChild(renderer.domElement);
 
             // Create stars
-            createStars(10000);
+            createStars(35000);
 
             // Random shape
             cubeGeo = new THREE.BoxGeometry(20, 20, 20);
@@ -68,8 +68,6 @@
             cube = new THREE.Mesh(cubeGeo, cubeMat);
 
             scene.add(cube);
-
-            removeObject(stars);
 
             // Trackball controls and settings
             controls = new THREE.TrackballControls(camera, renderer.domElement);
@@ -90,6 +88,8 @@
                 Math.random() * 500 - 250,
                 Math.random() * 400 - 200
                 );
+                star.velocity = {};
+                star.velocity = 0;
                 starGeometry.vertices.push(star);
             }
 
@@ -113,7 +113,16 @@
         }
 
         function animate() {
-            stars.rotation.y +=0.002;
+            //stars.rotation.y +=0.002;
+            starGeometry.vertices.forEach(p => {
+                p.velocity -= 0.001;
+                p.y -= 0.02;
+                if (p.y < -200) {
+                    p.y = 200;
+                    p.velocity = 0;
+                }
+            });
+            starGeometry.verticesNeedUpdate = true;
             controls.update();
             renderer.render(scene, camera);
             requestAnimationFrame(animate);
