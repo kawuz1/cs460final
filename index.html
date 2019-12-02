@@ -14,12 +14,18 @@
         <title>CS410 Intro</title>
     </head>
     <body>
+
+        <audio id = "music">
+            <source src="Cinematic.wav">
+        </audio>
+
         <script src="three.min.js"></script>
         <script src="three.js-master/examples/js/controls/TrackballControls.js"></script>
         <script>
 
+
+
         var scene, camera, renderer, rain, starGeometry, angle;
-        var fov, ratio, zNear, zFar;
         angle = 0;
         fov = 60;
         ratio = window.innerWidth / window.innerHeight;
@@ -28,38 +34,27 @@
 
         clicked = false;
         window.onclick = function() {
-            if (clicked) {
+
+            if (clicked)
                 return;
-            }
+
             clicked = true;
+
             init();
+
         }
 
         function init() {
-            // Music
-            var music = document.getElementById('music');
-            music.autoplay = true;
-            music.load();
+            loadMusic();
 
-            // Scene and lighting
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(fov, ratio, zNear, zFar);
-            camera.position.set(200, 200, 1000);
+            sceneSetup();
 
-            ambient = new THREE.AmbientLight(0xffffff);
-            scene.add(ambient);
+            cameraSetup(fov, ratio, zNear, zFar);
 
-            directionalLight = new THREE.DirectionalLight(0xffeedd);
-            directionalLight.position.set(0,0,1);
-            scene.add(directionalLight);
+            lightSetup();
 
-            renderer = new THREE.WebGLRenderer();
-            scene.fog = new THREE.FogExp2(0x11111f, 0.002);
-            renderer.setClearColor(scene.fog.color);
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            document.body.appendChild(renderer.domElement);
+            rendererSetup();
 
-            // Create stars
             createStars(35000);
 
             // Random shape
@@ -69,12 +64,7 @@
 
             scene.add(cube);
 
-            // Trackball controls and settings
-            controls = new THREE.TrackballControls(camera, renderer.domElement);
-            /* Keep trackball within starGeometry box with these settings */
-            controls.maxDistance = 100;
-            controls.minDistance = 1;
-            controls.noPan = true;
+            trackballSetup(1, 100);
 
             animate();
         }
@@ -88,8 +78,6 @@
                 Math.random() * 500 - 250,
                 Math.random() * 400 - 200
                 );
-                star.velocity = {};
-                star.velocity = 0;
                 starGeometry.vertices.push(star);
             }
 
@@ -104,6 +92,47 @@
             scene.add(stars);
         }
 
+        function loadMusic() {
+            var music = document.getElementById('music');
+            music.autoplay = true;
+            music.load();
+        }
+
+        function sceneSetup() {
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x11111f, 0.002);
+        }
+
+        function cameraSetup(fov, ratio, zNear, zFar) {
+            camera = new THREE.PerspectiveCamera(fov, ratio, zNear, zFar);
+            camera.position.set(200, 200, 1000);
+        }
+
+        function lightSetup() {
+            ambient = new THREE.AmbientLight(0xffffff);
+            scene.add(ambient);
+
+            directionalLight = new THREE.DirectionalLight(0xffeedd);
+            directionalLight.position.set(0,0,1);
+            scene.add(directionalLight);
+        }
+
+        function rendererSetup() {
+            renderer = new THREE.WebGLRenderer();
+            renderer.setClearColor(scene.fog.color);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+        }
+
+        function trackballSetup(minDist, maxDist) {
+            // Trackball controls and settings
+            controls = new THREE.TrackballControls(camera, renderer.domElement);
+            /* Keep trackball within starGeometry box with these settings */
+            controls.minDistance = minDist;
+            controls.maxDistance = maxDist;
+            controls.noPan = true;
+        }
+
         // Remove an object from the scene
         function removeObject(object) {
             scene.remove(object);
@@ -113,7 +142,8 @@
         }
 
         function animate() {
-            //stars.rotation.y +=0.002;
+            /* Particle velocity & rotation */
+            stars.rotation.y +=0.00002;
             starGeometry.vertices.forEach(p => {
                 p.velocity -= 0.001;
                 p.y -= 0.02;
@@ -128,9 +158,5 @@
             requestAnimationFrame(animate);
             }
         </script>
-
-        <audio id = "music">
-            <source src="Cinematic.wav">
-        </audio>
     </body>
 </html>
