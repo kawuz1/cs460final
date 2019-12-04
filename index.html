@@ -19,6 +19,10 @@
             <source src="Cinematic.wav">
         </audio>
 
+        <audio id = "speech">
+            <source src="speech.m4a">
+        </audio>
+
         <script src="three.min.js"></script>
         <script src="three.js-master/examples/js/controls/TrackballControls.js"></script>
         <script>
@@ -33,10 +37,13 @@
         zFar = 1000;
 
         clicked = false;
+
+        
         window.onclick = function() {
 
-            if (clicked)
+            if (clicked) {
                 return;
+            }
 
             clicked = true;
 
@@ -49,15 +56,95 @@
 
             sceneSetup();
 
+            // THIS
+            var floorTexture = new THREE.TextureLoader().load( 'this.png' );
+	        var floorGeometry = new THREE.PlaneBufferGeometry( 100, 100 );
+	        var floorMaterial = new THREE.MeshBasicMaterial( { color: 0x000fff,
+	        												   map: floorTexture,
+	                                                           // side: THREE.DoubleSide
+	                                                          } );
+	        floor = new THREE.Mesh( floorGeometry, floorMaterial );
+	        floor.position.set(0, 0, 120);
+	        scene.add( floor );
+
+	        // IS
+	        var isTexture = new THREE.TextureLoader().load( 'is.png' );
+	        var isGeometry = new THREE.PlaneBufferGeometry( 100, 100 );
+	        var isMaterial = new THREE.MeshBasicMaterial( { color: 0x000fff,
+	        												   map: isTexture
+	                                                          } );
+	        is = new THREE.Mesh( isGeometry, isMaterial );
+	        is.position.set(0, 0, 50);
+	        scene.add( is );
+
+
+	        // CS410!
+	        var csTexture = new THREE.TextureLoader().load( 'cs410!.png' );
+	        var csGeometry = new THREE.PlaneBufferGeometry( 100, 100 );
+	        var csMaterial = new THREE.MeshBasicMaterial( { color: 0x000fff,
+	        												   map: csTexture
+	                                                          } );
+	        cs = new THREE.Mesh( csGeometry, csMaterial );
+	        cs.position.set(0, 0, 10);
+	        scene.add( cs );
+
+	        // REAL SKILLS
+			var skillsTexture = new THREE.TextureLoader().load( 'realskills.png' );
+	        var skillsGeometry = new THREE.PlaneBufferGeometry( 100, 100 );
+	        var skillsMaterial = new THREE.MeshBasicMaterial( { color: 0xFFA500,
+	        												   map: skillsTexture
+	                                                          } );
+	        skills = new THREE.Mesh( skillsGeometry, skillsMaterial );
+	        skills.position.set(0, 0, -30);
+	        scene.add( skills );
+
+
+	        // REAL PROJECTS
+	        var projTexture = new THREE.TextureLoader().load( 'realprojects.png' );
+	        var projGeometry = new THREE.PlaneBufferGeometry( 100, 100 );
+	        var projMaterial = new THREE.MeshBasicMaterial( { color: 0xD3191C,
+	        												   map: projTexture
+	                                                          } );
+	        proj = new THREE.Mesh( projGeometry, projMaterial );
+	        proj.position.set(0, 0, -80);
+	        scene.add( proj );
+
+	        // $$
+	        var moneyTexture = new THREE.TextureLoader().load( 'money.png' );
+	        var moneyGeometry = new THREE.PlaneBufferGeometry( 100, 100 );
+	        var moneyMaterial = new THREE.MeshBasicMaterial( { color: 0xFFD700,
+	        												   map: moneyTexture
+	                                                          } );
+	        money = new THREE.Mesh( moneyGeometry, moneyMaterial );
+	        money.position.set(0, 0, -110);
+	        scene.add( money );
+
+	        // REAL IMPACT
+	        var impactTexture = new THREE.TextureLoader().load( 'realimpact.png' );
+	        var impactGeometry = new THREE.PlaneBufferGeometry( 100, 100 );
+	        var impactMaterial = new THREE.MeshBasicMaterial( { color: 0xCCFF00,
+	        												   map: impactTexture
+	                                                          } );
+	        impact = new THREE.Mesh( impactGeometry, impactMaterial );
+	        impact.position.set(0, 0, -160);
+	        scene.add( impact );
+
+
             cameraSetup(fov, ratio, zNear, zFar);
 
             lightSetup();
 
             rendererSetup();
 
-            createStars(35000);
+            createStars(70000);
 
-            trackballSetup(1, 100);
+            // trackballSetup(1, 100);
+
+            setTimeout(function() {
+        		var speech = document.getElementById('speech');
+            	speech.autoplay = true;
+            	speech.load();
+        	}, 3000);
 
             animate();
         }
@@ -88,17 +175,18 @@
         function loadMusic() {
             var music = document.getElementById('music');
             music.autoplay = true;
+            music.volume = 0.07;
             music.load();
         }
 
         function sceneSetup() {
             scene = new THREE.Scene();
-            scene.fog = new THREE.FogExp2(0x11111f, 0.002);
+            scene.fog = new THREE.FogExp2(0x010101, 0.002);
         }
 
         function cameraSetup(fov, ratio, zNear, zFar) {
             camera = new THREE.PerspectiveCamera(fov, ratio, zNear, zFar);
-            camera.position.set(200, 200, 1000);
+            camera.position.set(0, 0, 200);
         }
 
         function lightSetup() {
@@ -121,8 +209,8 @@
             // Trackball controls and settings
             controls = new THREE.TrackballControls(camera, renderer.domElement);
             /* Keep trackball within starGeometry box with these settings */
-            controls.minDistance = minDist;
-            controls.maxDistance = maxDist;
+            // controls.minDistance = minDist;
+            // controls.maxDistance = maxDist;
             controls.noPan = true;
         }
 
@@ -138,8 +226,22 @@
         }
 
         function animate() {
-            /* Particle velocity & rotation */
-            stars.rotation.y +=0.00002;
+        	setTimeout(function(){
+        		timeflag = true;
+           		removeObject(floor);
+            	removeObject(is);
+            	removeObject(cs);
+            	removeObject(skills);
+            	removeObject(proj);
+            	removeObject(money);
+            	removeObject(impact);
+
+            	camera.position.set(0, 0, 200);
+
+       		}, 31000);
+
+        	/* Particle velocity & rotation */
+        	stars.rotation.y +=0.00002;
             starGeometry.vertices.forEach(p => {
                 p.velocity -= 0.001;
                 p.y -= 0.02;
@@ -148,11 +250,13 @@
                     p.velocity = 0;
                 }
             });
+            camera.position.z -= 0.2;
             starGeometry.verticesNeedUpdate = true;
-            controls.update();
+            // controls.update();
+            money.rotateY(Math.PI/6);
             renderer.render(scene, camera);
             requestAnimationFrame(animate);
-            }
+        }
         </script>
     </body>
 </html>
