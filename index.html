@@ -15,11 +15,7 @@
     </head>
     <body>
 
-        <audio id = "music">
-            <source src="Cinematic.wav">
-        </audio>
-
-        <audio id = "speech">
+        <audio id="speech">
             <source src="speech.m4a">
         </audio>
 
@@ -56,95 +52,37 @@
 
             sceneSetup();
 
-            // THIS
-            var floorTexture = new THREE.TextureLoader().load( 'this.png' );
-	        var floorGeometry = new THREE.PlaneBufferGeometry( 100, 100 );
-	        var floorMaterial = new THREE.MeshBasicMaterial( { color: 0x000fff,
-	        												   map: floorTexture,
-	                                                           // side: THREE.DoubleSide
-	                                                          } );
-	        floor = new THREE.Mesh( floorGeometry, floorMaterial );
-	        floor.position.set(0, 0, 120);
-	        scene.add( floor );
-
-	        // IS
-	        var isTexture = new THREE.TextureLoader().load( 'is.png' );
-	        var isGeometry = new THREE.PlaneBufferGeometry( 100, 100 );
-	        var isMaterial = new THREE.MeshBasicMaterial( { color: 0x000fff,
-	        												   map: isTexture
-	                                                          } );
-	        is = new THREE.Mesh( isGeometry, isMaterial );
-	        is.position.set(0, 0, 50);
-	        scene.add( is );
-
-
-	        // CS410!
-	        var csTexture = new THREE.TextureLoader().load( 'cs410!.png' );
-	        var csGeometry = new THREE.PlaneBufferGeometry( 100, 100 );
-	        var csMaterial = new THREE.MeshBasicMaterial( { color: 0x000fff,
-	        												   map: csTexture
-	                                                          } );
-	        cs = new THREE.Mesh( csGeometry, csMaterial );
-	        cs.position.set(0, 0, 10);
-	        scene.add( cs );
-
-	        // REAL SKILLS
-			var skillsTexture = new THREE.TextureLoader().load( 'realskills.png' );
-	        var skillsGeometry = new THREE.PlaneBufferGeometry( 100, 100 );
-	        var skillsMaterial = new THREE.MeshBasicMaterial( { color: 0xFFA500,
-	        												   map: skillsTexture
-	                                                          } );
-	        skills = new THREE.Mesh( skillsGeometry, skillsMaterial );
-	        skills.position.set(0, 0, -30);
-	        scene.add( skills );
-
-
-	        // REAL PROJECTS
-	        var projTexture = new THREE.TextureLoader().load( 'realprojects.png' );
-	        var projGeometry = new THREE.PlaneBufferGeometry( 100, 100 );
-	        var projMaterial = new THREE.MeshBasicMaterial( { color: 0xD3191C,
-	        												   map: projTexture
-	                                                          } );
-	        proj = new THREE.Mesh( projGeometry, projMaterial );
-	        proj.position.set(0, 0, -80);
-	        scene.add( proj );
-
-	        // $$
-	        var moneyTexture = new THREE.TextureLoader().load( 'money.png' );
-	        var moneyGeometry = new THREE.PlaneBufferGeometry( 100, 100 );
-	        var moneyMaterial = new THREE.MeshBasicMaterial( { color: 0xFFD700,
-	        												   map: moneyTexture
-	                                                          } );
-	        money = new THREE.Mesh( moneyGeometry, moneyMaterial );
-	        money.position.set(0, 0, -110);
-	        scene.add( money );
-
-	        // REAL IMPACT
-	        var impactTexture = new THREE.TextureLoader().load( 'realimpact.png' );
-	        var impactGeometry = new THREE.PlaneBufferGeometry( 100, 100 );
-	        var impactMaterial = new THREE.MeshBasicMaterial( { color: 0xCCFF00,
-	        												   map: impactTexture
-	                                                          } );
-	        impact = new THREE.Mesh( impactGeometry, impactMaterial );
-	        impact.position.set(0, 0, -160);
-	        scene.add( impact );
-
-
             cameraSetup(fov, ratio, zNear, zFar);
 
             lightSetup();
 
             rendererSetup();
 
+            var x = 0, y = 0;
+
+            var heartShape = new THREE.Shape();
+
+            heartShape.moveTo( x + 5, y + 5 );
+            heartShape.bezierCurveTo( x + 5, y + 5, x + 4, y, x, y );
+            heartShape.bezierCurveTo( x - 6, y, x - 6, y + 7,x - 6, y + 7 );
+            heartShape.bezierCurveTo( x - 6, y + 11, x - 3, y + 15.4, x + 5, y + 19 );
+            heartShape.bezierCurveTo( x + 12, y + 15.4, x + 16, y + 11, x + 16, y + 7 );
+            heartShape.bezierCurveTo( x + 16, y + 7, x + 16, y, x + 10, y );
+            heartShape.bezierCurveTo( x + 7, y, x + 5, y + 5, x + 5, y + 5 );
+
+            geometry = new THREE.ShapeBufferGeometry( heartShape, 1 );
+            material = new THREE.MeshBasicMaterial( { color: 0x00ff00,
+                                                          side: THREE.DoubleSide,
+                                                          opacity: true,
+                                                          transparent: true
+                                                         } );
+            mesh = new THREE.Mesh( geometry, material ) ;
+            scene.add( mesh );
+            mesh.rotateX(Math.PI);
+
             createStars(70000);
 
-            // trackballSetup(1, 100);
-
-            setTimeout(function() {
-        		var speech = document.getElementById('speech');
-            	speech.autoplay = true;
-            	speech.load();
-        	}, 3000);
+            trackballSetup(1, 100);
 
             animate();
         }
@@ -162,8 +100,8 @@
             }
 
             starMaterial = new THREE.PointsMaterial({
-                color: 0xffffff,
-                size: 0.1,
+                color: 0xffffff * Math.random(),
+                size: 0.5,
                 transparent: true
             });
 
@@ -175,8 +113,7 @@
         function loadMusic() {
             var music = document.getElementById('music');
             music.autoplay = true;
-            music.volume = 0.07;
-            music.load();
+            music.play();
         }
 
         function sceneSetup() {
@@ -186,7 +123,7 @@
 
         function cameraSetup(fov, ratio, zNear, zFar) {
             camera = new THREE.PerspectiveCamera(fov, ratio, zNear, zFar);
-            camera.position.set(0, 0, 200);
+            camera.position.set(200, 0, 1000);
         }
 
         function lightSetup() {
@@ -226,21 +163,8 @@
         }
 
         function animate() {
-        	setTimeout(function(){
-        		timeflag = true;
-           		removeObject(floor);
-            	removeObject(is);
-            	removeObject(cs);
-            	removeObject(skills);
-            	removeObject(proj);
-            	removeObject(money);
-            	removeObject(impact);
-
-            	camera.position.set(0, 0, 200);
-
-       		}, 31000);
-
         	/* Particle velocity & rotation */
+            material.opacity.set -= 0.2;
         	stars.rotation.y +=0.00002;
             starGeometry.vertices.forEach(p => {
                 p.velocity -= 0.001;
@@ -250,13 +174,19 @@
                     p.velocity = 0;
                 }
             });
-            camera.position.z -= 0.2;
+            if (camera.position.z != -300) {
+            	camera.position.z -= 4;
+            }
             starGeometry.verticesNeedUpdate = true;
-            // controls.update();
-            money.rotateY(Math.PI/6);
+            controls.update();
             renderer.render(scene, camera);
             requestAnimationFrame(animate);
         }
         </script>
+
+        <audio id="music">
+            <source src="badcat.mp3">
+        </audio>
+
     </body>
 </html>
