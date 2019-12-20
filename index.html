@@ -14,17 +14,12 @@
         <title>CS410 Intro</title>
     </head>
     <body>
-
-        <audio id="speech">
-            <source src="speech.m4a">
-        </audio>
-
         <script src="three.min.js"></script>
         <script src="three.js-master/examples/js/controls/TrackballControls.js"></script>
         <script>
 
 
-
+        flag = false;
         var scene, camera, renderer, rain, starGeometry, angle;
         angle = 0;
         fov = 60;
@@ -58,6 +53,43 @@
 
             rendererSetup();
 
+            var loader = new THREE.FontLoader();
+            var font = loader.load(
+                // resource URL
+                'Oswald_Regular_Regular.json',
+
+                // onLoad callback
+                function ( font ) {
+                    // do something with the font
+                    text = new THREE.TextGeometry( "UMass Boston", {
+                        font: font,
+                        size: 40,
+                        height: 10,
+                        curveSegments: 12,
+                        bevelThickness: 2,
+                        bevelSize: 1,
+                        bevelEnabled: true
+                    });
+                    material = new THREE.MeshPhongMaterial({ color: 0xffffff,
+                                                             specular: Math.random()
+                                                            });
+
+                    umass_mesh = new THREE.Mesh( text, material );
+                    umass_mesh.rotateY( Math.PI );
+                    scene.add( umass_mesh );
+                },
+
+                // onProgress callback
+                function ( xhr ) {
+                    console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+                },
+
+                // onError callback
+                function ( err ) {
+                    console.log( 'An error happened' );
+                }
+            );
+
             var x = 0, y = 0;
 
             var heartShape = new THREE.Shape();
@@ -71,14 +103,14 @@
             heartShape.bezierCurveTo( x + 7, y, x + 5, y + 5, x + 5, y + 5 );
 
             geometry = new THREE.ShapeBufferGeometry( heartShape, 1 );
-            material = new THREE.MeshBasicMaterial( { color: 0x00ff00,
+            material = new THREE.MeshBasicMaterial( { color: 0xffffff * Math.random(),
                                                           side: THREE.DoubleSide,
                                                           opacity: true,
                                                           transparent: true
                                                          } );
-            mesh = new THREE.Mesh( geometry, material ) ;
-            scene.add( mesh );
-            mesh.rotateX(Math.PI);
+            heart_mesh = new THREE.Mesh( geometry, material ) ;
+            scene.add( heart_mesh );
+            heart_mesh.rotateX(Math.PI);
 
             createStars(70000);
 
@@ -174,8 +206,16 @@
                     p.velocity = 0;
                 }
             });
-            if (camera.position.z != -300) {
-            	camera.position.z -= 4;
+            if (flag == false) {
+                if (camera.position.z != -300) {
+                	camera.position.z -= 4;
+
+                }
+            }
+            if (camera.position.z == -300) {
+                flag = true;
+                umass_mesh.quaternion.slerp( new THREE.Quaternion( 0, 0, 0, 1), 0.001 );
+
             }
             starGeometry.verticesNeedUpdate = true;
             controls.update();
@@ -184,9 +224,6 @@
         }
         </script>
 
-        <audio id="music">
-            <source src="badcat.mp3">
-        </audio>
-
+        <audio id="music"><source src="badcat.mp3"></audio>
     </body>
 </html>
