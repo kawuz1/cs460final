@@ -20,6 +20,7 @@
 
 
         flag = false;
+        flag2 = false;
         var scene, camera, renderer, rain, starGeometry, angle;
         angle = 0;
         fov = 60;
@@ -64,9 +65,9 @@
                     text = new THREE.TextGeometry( "UMass Boston", {
                         font: font,
                         size: 40,
-                        height: 10,
+                        height: 9,
                         curveSegments: 12,
-                        bevelThickness: 2,
+                        bevelThickness: 1,
                         bevelSize: 1,
                         bevelEnabled: true
                     });
@@ -115,6 +116,14 @@
             createStars(70000);
 
             trackballSetup(1, 100);
+
+            setTimeout(function() {
+                umass_mesh.rotateY(4*Math.PI/5);
+            }, 7300);
+
+            setTimeout(function() {
+                
+            }, 9000);
 
             animate();
         }
@@ -207,15 +216,25 @@
                 }
             });
             if (flag == false) {
-                if (camera.position.z != -300) {
+                if (camera.position.z != -320) {
                 	camera.position.z -= 4;
 
                 }
             }
-            if (camera.position.z == -300) {
+            if (camera.position.z == -320) {
                 flag = true;
-                umass_mesh.quaternion.slerp( new THREE.Quaternion( 0, 0, 0, 1), 0.001 );
-
+            }
+            if (flag == true) {
+                if (camera.position.z != -130) {
+                    camera.position.z += 2;
+                }
+                if (camera.position.x != -120) {
+                    camera.position.x -= 2;
+                }
+                if (camera.position.y != -80) {
+                    camera.position.z += 2;
+                }
+                // umass_mesh.quaternion.slerp( new THREE.Quaternion( 0, 0, Math.sin(Math.PI/8), Math.cos(Math.PI/2)), 0.01 );
             }
             starGeometry.verticesNeedUpdate = true;
             controls.update();
